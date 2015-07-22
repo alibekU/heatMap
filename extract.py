@@ -13,16 +13,16 @@ newNames1 = ['ASW', 'ACB', 'LWK', 'GWD', 'MSL', 'YRI', 'ESN', 'PEL', 'KHV', 'CHB
 
 def process(str):
 	arr = str.rstrip('\n').split('\t')
-	return map(lambda x: float(0) if x =='-' else float(x), arr[1:])
+	arr = arr[1:]
+	return map(lambda x: float('nan') if x =='-' else float(x), arr)
 
 def drawHeatMap(data,names,project):
 	fig, ax = plt.subplots()
-	ax.pcolor(data,cmap=plt.cm.Reds)
+	cmp = plt.cm.Reds_r
+	cmp.set_bad('w',1.)
 
-	fig = plt.gcf()
-	
-	ax.set_xticks(np.arange(0,len(names))+0.5)
-	ax.set_yticks(np.arange(0,len(names))+0.5)
+	ax.set_xticks(np.arange(0,len(names)))
+	ax.set_yticks(np.arange(0,len(names)))
 	
 	ax.invert_yaxis()	
 	ax.xaxis.tick_top()
@@ -36,7 +36,6 @@ def drawHeatMap(data,names,project):
 
 	plt.xticks(rotation=90)
 	
-	ax = plt.gca()
 	for t in ax.xaxis.get_major_ticks():
 		t.tick1On = False
 		t.tick2On = False
@@ -45,6 +44,7 @@ def drawHeatMap(data,names,project):
 		t.tick2On = False
 
 	fname = ''.join(['heatMap_', project, '.svg'])
+	ax.imshow(data,interpolation='nearest',cmap=cmp)
 	plt.savefig(fname, format = 'svg', dpi = 1200) 
 	plt.close()
 
@@ -96,7 +96,5 @@ def getData(dir, file, newNames = []):
 res = getData(dir1, file, newNames1)
 drawHeatMap(res['data'], res['names'], project1)
 
-'''
 res = getData(dir2, file)
 drawHeatMap(res['data'], res['names'], project2)
-'''
